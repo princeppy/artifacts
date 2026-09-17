@@ -18,39 +18,38 @@
 :root{
   --bg:#FAF6F5; --surface:#FFFFFF; --sunk:#F3EBE9;
   --ink:#241017; --ink2:#6B5158; --line:#E7DAD8;
-  --plum:#772953; --ember:#DD4814; --ok:#0E7A5F;
+  --plum:#772953; --ember:#DD4814; --ok:#0E7A5F; --warn:#B3261E;
   --code-bg:#2A0D19; --code-fg:#F2E7E4; --code-dim:#9C8188; --code-cmd:#7FE0B8;
-  --rail:#E7DAD8;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#17080F; --surface:#22101A; --sunk:#1D0C14;
     --ink:#F6EDEB; --ink2:#B69EA5; --line:#3A2029;
-    --plum:#D98CB3; --ember:#FF7A45; --ok:#4ECBA5;
+    --plum:#D98CB3; --ember:#FF7A45; --ok:#4ECBA5; --warn:#FF8A80;
     --code-bg:#100409; --code-fg:#F2E7E4; --code-dim:#8E747B; --code-cmd:#7FE0B8;
-    --rail:#3A2029;
   }
 }
 :root[data-theme="dark"]{
   --bg:#17080F; --surface:#22101A; --sunk:#1D0C14;
   --ink:#F6EDEB; --ink2:#B69EA5; --line:#3A2029;
-  --plum:#D98CB3; --ember:#FF7A45; --ok:#4ECBA5;
+  --plum:#D98CB3; --ember:#FF7A45; --ok:#4ECBA5; --warn:#FF8A80;
   --code-bg:#100409; --code-fg:#F2E7E4; --code-dim:#8E747B; --code-cmd:#7FE0B8;
-  --rail:#3A2029;
 }
 
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   margin:0; background:var(--bg); color:var(--ink);
   font-family:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
   font-size:17px; line-height:1.6; letter-spacing:-0.005em;
 }
-img{max-width:100%}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--ember); outline-offset:3px; border-radius:2px}
-
 .wrap{max-width:1020px; margin:0 auto; padding:0 24px}
+
+/* grid items must be allowed to shrink, or wide tables/code push the page */
+.step>*,.cols2>*,.two>*,.hero-grid>*,.sheet>*{min-width:0}
 
 /* ---------- top bar ---------- */
 .bar{
@@ -83,10 +82,8 @@ h1{
 }
 .lede{font-size:clamp(19px,2.6vw,24px); color:var(--ink2); max-width:56ch; margin:0 0 34px; line-height:1.45}
 .lede b{color:var(--ink); font-weight:600}
-
 .hero-grid{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:end}
 @media (max-width:860px){.hero-grid{grid-template-columns:1fr; gap:32px}}
-
 .facts{display:flex; flex-wrap:wrap; gap:10px}
 .fact{
   font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
@@ -95,29 +92,17 @@ h1{
 }
 
 /* ---------- terminal ---------- */
-.term{
-  background:var(--code-bg); border-radius:12px; overflow:hidden;
-  box-shadow:0 18px 40px -24px rgba(44,13,25,.7);
-}
-.term-top{
-  display:flex; align-items:center; gap:7px; padding:11px 14px;
-  border-bottom:1px solid rgba(255,255,255,.07);
-}
+.term{background:var(--code-bg); border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -24px rgba(44,13,25,.7)}
+.term-top{display:flex; align-items:center; gap:7px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.07)}
 .dot{width:10px; height:10px; border-radius:50%; background:#5A3742}
 .dot:first-child{background:var(--ember)}
-.term-title{
-  margin-left:8px; font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:11.5px; color:var(--code-dim);
-}
+.term-title{margin-left:8px; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:11.5px; color:var(--code-dim)}
 .term pre{margin:0; padding:18px 16px 20px}
-.cursor{
-  display:inline-block; width:8px; height:1.05em; background:var(--code-cmd);
-  vertical-align:-2px; animation:blink 1.15s steps(2,start) infinite;
-}
+.cursor{display:inline-block; width:8px; height:1.05em; background:var(--code-cmd); vertical-align:-2px; animation:blink 1.15s steps(2,start) infinite}
 @keyframes blink{to{visibility:hidden}}
 @media (prefers-reduced-motion:reduce){.cursor{animation:none}}
 
-/* ---------- code blocks ---------- */
+/* ---------- code ---------- */
 pre{
   font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
   font-size:13.5px; line-height:1.75; color:var(--code-fg);
@@ -126,7 +111,6 @@ pre{
 code{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
 .c{color:var(--code-dim)}
 .k{color:var(--code-cmd)}
-
 .code{position:relative; background:var(--code-bg); border-radius:10px; margin:18px 0}
 .code pre{padding:18px 16px}
 .copy{
@@ -139,8 +123,6 @@ code{font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
 @media (hover:none){.copy{opacity:1}}
 .copy:hover{background:rgba(255,255,255,.14)}
 .copy[data-done="1"]{color:var(--code-cmd)}
-
-/* ---------- inline code in prose ---------- */
 p code,li code,td code{
   background:var(--sunk); color:var(--plum); font-size:0.86em;
   padding:1px 5px; border-radius:4px; border:1px solid var(--line);
@@ -148,45 +130,55 @@ p code,li code,td code{
 
 /* ---------- sections ---------- */
 section{padding:66px 0; border-bottom:1px solid var(--line)}
-.eyebrow{
-  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12px;
-  color:var(--ember); margin:0 0 12px;
-}
+.eyebrow{font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12px; color:var(--ember); margin:0 0 12px}
 h2{font-size:clamp(28px,4.6vw,40px); line-height:1.08; letter-spacing:-0.032em; font-weight:700; margin:0 0 12px; max-width:20ch}
 h3{font-size:22px; letter-spacing:-0.02em; font-weight:700; margin:0 0 6px}
+h4.mini{font-size:16px; font-weight:700; margin:30px 0 4px; letter-spacing:-0.01em}
 .sub{color:var(--ink2); font-size:18px; margin:0 0 34px; max-width:60ch}
 
-/* ---------- before: two column ---------- */
+/* ---------- before ---------- */
 .two{display:grid; grid-template-columns:1.45fr 1fr; gap:44px; align-items:start}
 @media (max-width:860px){.two{grid-template-columns:1fr; gap:30px}}
-
 .miss{list-style:none; margin:0; padding:0}
 .miss li{padding:18px 0; border-top:1px solid var(--line)}
 .miss li:first-child{border-top:0; padding-top:0}
 .miss b{display:block; font-size:18.5px; letter-spacing:-0.015em; margin-bottom:3px}
 .miss span{color:var(--ink2); font-size:16px}
-
 .after{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:26px 24px}
 .after h4{margin:0 0 16px; font-size:13px; font-family:'JetBrains Mono',ui-monospace,monospace; color:var(--ember); font-weight:500}
 .after ul{list-style:none; margin:0; padding:0}
 .after li{display:flex; gap:11px; align-items:baseline; padding:8px 0; font-weight:500}
 .tick{color:var(--ok); font-size:14px; flex:none}
 
-/* ---------- the hour rail ---------- */
-.step{display:grid; grid-template-columns:96px 1fr; gap:34px; padding:52px 0; border-top:1px solid var(--line)}
+/* ---------- machine picker ---------- */
+.picker{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  padding:16px 0 4px; margin-bottom:10px;
+}
+.picker p{margin:0 8px 0 0; font-size:15px; color:var(--ink2)}
+.pick{
+  font-family:inherit; font-size:14px; font-weight:500; color:var(--ink2);
+  background:var(--surface); border:1px solid var(--line);
+  padding:7px 14px; border-radius:999px; cursor:pointer;
+}
+.pick:hover{border-color:var(--ember); color:var(--ink)}
+.pick[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+
+/* ---------- step rail ---------- */
+.steps{counter-reset:step}
+.step{display:grid; grid-template-columns:104px 1fr; gap:34px; padding:52px 0; border-top:1px solid var(--line); counter-increment:step}
 .step:first-of-type{border-top:0}
 @media (max-width:760px){.step{grid-template-columns:1fr; gap:0; padding:40px 0}}
-
 .rail{position:relative}
 .rail-in{position:sticky; top:78px}
-.num{
-  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:30px;
-  font-weight:700; line-height:1; color:var(--ink); letter-spacing:-0.04em;
+.num{font-family:'JetBrains Mono',ui-monospace,monospace; font-size:30px; font-weight:700; line-height:1; color:var(--ink); letter-spacing:-0.04em}
+.num::before{content:counter(step,decimal-leading-zero)}
+.tag{
+  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:11px;
+  margin-top:8px; color:var(--plum); border:1px solid var(--line);
+  padding:2px 7px; border-radius:999px; display:inline-block; background:var(--surface);
 }
-.mins{
-  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12px;
-  color:var(--ember); margin-top:7px;
-}
+.mins{font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12px; color:var(--ember); margin-top:8px}
 .done{
   margin-top:16px; display:inline-flex; align-items:center; gap:7px;
   font-size:12.5px; color:var(--ink2); background:none; border:1px solid var(--line);
@@ -198,37 +190,31 @@ h3{font-size:22px; letter-spacing:-0.02em; font-weight:700; margin:0 0 6px}
 .step[data-done="1"] .done{color:var(--ok); border-color:var(--ok)}
 .step[data-done="1"] .num,.step[data-done="1"] h3{opacity:.5}
 @media (max-width:760px){
-  .rail-in{position:static; display:flex; align-items:center; gap:14px; margin-bottom:14px}
+  .rail-in{position:static; display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap}
   .num{font-size:20px}
-  .mins{margin-top:0}
+  .mins,.tag{margin-top:0}
   .done{margin-top:0; margin-left:auto}
 }
 
+/* ---------- blocks ---------- */
 .why{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--ember); border-radius:10px; padding:20px 22px; margin:18px 0}
 .why h4{margin:0 0 10px; font-size:13px; font-family:'JetBrains Mono',ui-monospace,monospace; color:var(--ember); font-weight:500}
 .why ul{margin:0; padding-left:18px}
 .why li{padding:3px 0; color:var(--ink2)}
 .why li::marker{color:var(--ember)}
-
-.note{
-  border-left:3px solid var(--plum); padding:2px 0 2px 16px; margin:20px 0;
-  color:var(--ink2); font-size:16.5px;
-}
+.note{border-left:3px solid var(--plum); padding:2px 0 2px 16px; margin:20px 0; color:var(--ink2); font-size:16.5px}
 .note b{color:var(--ink)}
-
-.cols2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+.stop{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--warn); border-radius:10px; padding:20px 22px; margin:20px 0}
+.stop h4{margin:0 0 8px; font-size:13px; font-family:'JetBrains Mono',ui-monospace,monospace; color:var(--warn); font-weight:500}
+.stop p{margin:0; color:var(--ink2); font-size:16.5px}
+.stop b{color:var(--ink)}
+.cols2{display:grid; grid-template-columns:1fr 1fr; gap:18px; align-items:start}
 @media (max-width:760px){.cols2{grid-template-columns:1fr}}
-
-/* grid items must be allowed to shrink, or wide tables/code push the page */
-.step>*,.cols2>*,.two>*,.hero-grid>*,.sheet>*{min-width:0}
 
 /* ---------- tables ---------- */
 .tw{overflow-x:auto; margin:20px 0; border:1px solid var(--line); border-radius:10px; background:var(--surface)}
 table{border-collapse:collapse; width:100%; min-width:520px; font-size:15.5px}
-th{
-  text-align:left; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:11.5px;
-  font-weight:500; color:var(--ember); padding:13px 16px; border-bottom:1px solid var(--line);
-}
+th{text-align:left; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:11.5px; font-weight:500; color:var(--ember); padding:13px 16px; border-bottom:1px solid var(--line)}
 td{padding:13px 16px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--ink2)}
 tr:last-child td{border-bottom:0}
 td:first-child{color:var(--ink); font-weight:600}
@@ -239,20 +225,11 @@ td .mono{font-family:'JetBrains Mono',ui-monospace,monospace; font-size:13px; co
 @media (max-width:860px){.sheet{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){.sheet{grid-template-columns:1fr}}
 .panel{background:var(--code-bg); border-radius:10px; padding:18px 16px}
-.panel h4{
-  margin:0 0 12px; font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:11.5px; font-weight:500; color:var(--ember);
-}
+.panel h4{margin:0 0 12px; font-family:'JetBrains Mono',ui-monospace,monospace; font-size:11.5px; font-weight:500; color:var(--ember)}
 .panel pre{font-size:12.5px; line-height:1.95}
 
-
-/* ---------- footer ---------- */
 footer{padding:48px 0 64px; color:var(--ink2); font-size:14.5px}
-footer a{color:var(--plum)}
-.reset{
-  background:none; border:1px solid var(--line); color:var(--ink2);
-  font-family:inherit; font-size:13px; padding:6px 12px; border-radius:999px; cursor:pointer;
-}
+.reset{background:none; border:1px solid var(--line); color:var(--ink2); font-family:inherit; font-size:13px; padding:6px 12px; border-radius:999px; cursor:pointer}
 .reset:hover{border-color:var(--ember); color:var(--ink)}
 </style>
 </head>
@@ -262,26 +239,24 @@ footer a{color:var(--plum)}
   <div class="mark">Ubuntu<span>/</span>first hour</div>
   <nav>
     <a href="#before">Before you start</a>
-    <a href="#hour">The ten steps</a>
+    <a href="#hour">The steps</a>
     <a href="#laptop">Laptops</a>
+    <a href="#housekeeping">Housekeeping</a>
     <a href="#problems">Problems</a>
-    <a href="#server">Servers</a>
-    <a href="#https">HTTPS</a>
     <a href="#sheet">Cheat sheet</a>
   </nav>
 </div></div>
 
 <header class="hero"><div class="wrap">
-  <p class="kicker">Desktop and server</p>
+  <p class="kicker">Laptop, desktop or a VPS</p>
   <h1>Ubuntu after install</h1>
   <div class="hero-grid">
     <div>
-      <p class="lede">A fresh install is not a finished install. <b>Twenty commands, one hour, done properly once</b> — updates, the package managers nobody explains, a security baseline, backups that actually run, drivers, and the housekeeping that stops the disk filling up six months from now.</p>
+      <p class="lede">A fresh install is not a finished install. <b>One hour, done properly once</b> — updates, the package managers nobody explains, a security baseline, backups that actually run, a certificate, and the housekeeping that stops the disk filling up six months from now.</p>
       <div class="facts">
-        <span class="fact">10 steps</span>
-        <span class="fact">20 commands</span>
+        <span class="fact">13 steps</span>
         <span class="fact">~1 hour</span>
-        <span class="fact">desktop + server</span>
+        <span class="fact">copy-paste ready</span>
       </div>
     </div>
     <div class="term">
@@ -297,23 +272,24 @@ footer a{color:var(--plum)}
 
 <section id="before"><div class="wrap">
   <p class="eyebrow">Read this first</p>
-  <h2>Ubuntu boots and looks ready. Five things are missing.</h2>
-  <p class="sub">All five matter within a week.</p>
+  <h2>It boots and looks ready. Five things are missing.</h2>
+  <p class="sub">All five matter within a week — and on a machine with a public address, within minutes.</p>
   <div class="two">
     <ul class="miss">
-      <li><b>It is already out of date</b><span>The ISO was built months ago. Everything on it has security updates waiting.</span></li>
+      <li><b>It is already out of date</b><span>The image was built months ago. Everything on it has security updates waiting.</span></li>
       <li><b>The firewall is installed but off</b><span><code>ufw</code> ships with Ubuntu and does nothing at all until you enable it.</span></li>
       <li><b>There is no backup</b><span>The best moment to configure backups is now, while there is nothing to lose.</span></li>
       <li><b>Proprietary drivers may be missing</b><span>NVIDIA graphics, some Wi-Fi chips and firmware updates all need one more step.</span></li>
+      <li><b>A public server is already being scanned</b><span>A fresh VPS starts receiving SSH login attempts within minutes of getting its address. With password authentication disabled they are harmless; with it enabled, a weak root password is found in hours.</span></li>
     </ul>
     <div class="after">
       <h4>one hour from now</h4>
       <ul>
         <li><span class="tick">✓</span>Fully patched</li>
-        <li><span class="tick">✓</span>Firewall on</li>
+        <li><span class="tick">✓</span>Firewall on, keys only</li>
         <li><span class="tick">✓</span>Backups running</li>
         <li><span class="tick">✓</span>Drivers correct</li>
-        <li><span class="tick">✓</span>Tools installed</li>
+        <li><span class="tick">✓</span>A real certificate</li>
         <li><span class="tick">✓</span>Disk staying clean</li>
       </ul>
     </div>
@@ -321,16 +297,28 @@ footer a{color:var(--plum)}
 </div></section>
 
 <section id="hour"><div class="wrap">
+  <p class="eyebrow">The checklist</p>
+  <h2>One pass, in order</h2>
+  <p class="sub">Every step below applies to any Ubuntu machine unless its label says otherwise. Tell the page what you are setting up and it will show you only the steps that apply.</p>
+
+  <div class="picker" role="group" aria-label="Which machine are you setting up">
+    <p>I am setting up:</p>
+    <button class="pick" type="button" data-scope="all" aria-pressed="true">Everything</button>
+    <button class="pick" type="button" data-scope="desktop" aria-pressed="false">A laptop or desktop</button>
+    <button class="pick" type="button" data-scope="server" aria-pressed="false">A server or VPS</button>
+  </div>
+
+  <div class="steps">
 
   <!-- 1 -->
-  <div class="step" data-step="1">
+  <div class="step" data-step="first-five" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">01</div><div class="mins">5 min</div>
+      <div class="num"></div><div class="mins">5 min</div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
       <h3>The first five minutes</h3>
-      <p class="sub" style="margin-bottom:0">Three commands and one reboot. Do this before anything else, on desktop and server alike.</p>
+      <p class="sub" style="margin-bottom:0">Three commands and one reboot, before anything else.</p>
       <div class="code">
 <pre><span class="c"># 1. bring the system fully up to date</span>
 <span class="k">sudo apt update</span>
@@ -342,26 +330,58 @@ fwupdmgr get-updates
 fwupdmgr update
 
 <span class="c"># 3. reboot if a new kernel arrived</span>
-<span class="k">sudo reboot</span></pre>
+ls /var/run/reboot-required &amp;&amp; <span class="k">sudo reboot</span></pre>
       </div>
       <div class="why">
         <h4>why this order</h4>
         <ul>
-          <li>The ISO was built months ago — assume dozens of security fixes are pending</li>
+          <li>The image was built months ago — assume dozens of security fixes are pending</li>
           <li><code>apt update</code> refreshes the package lists; it installs nothing on its own</li>
           <li><code>apt upgrade</code> is what actually installs the new versions</li>
           <li>Firmware updates fix battery, thermal and SSD bugs that look like Linux problems</li>
           <li>A new kernel only takes effect after a reboot</li>
         </ul>
       </div>
-      <p class="note">If a reboot is needed, Ubuntu usually says so. You can also check for the file <code>/var/run/reboot-required</code> — <b>if it exists, reboot.</b></p>
+
+      <h4 class="mini">On a VPS, the same four commands at first login</h4>
+      <div class="cols2">
+        <div class="code">
+<pre>ssh root@203.0.113.10
+
+apt update &amp;&amp; apt upgrade -y
+
+hostnamectl set-hostname web01
+timedatectl set-timezone Asia/Bahrain
+
+ls /var/run/reboot-required &amp;&amp; reboot</pre>
+        </div>
+        <div class="why" style="margin-top:18px">
+          <h4>check while you are there</h4>
+          <ul>
+            <li><code>ip a</code> — the public address matches the panel</li>
+            <li><code>df -h</code> — how much disk you actually have</li>
+            <li><code>free -h</code> — how much RAM, and whether swap exists</li>
+            <li><code>ss -tulpn</code> — what is listening before you changed anything</li>
+            <li><code>cat /etc/os-release</code> — the release you asked for</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Name the host something you will recognise at 3 a.m., not <code>server1</code>. Thirty seconds of sanity checking confirms the machine you are paying for is the machine you ordered.</p>
+      <p class="note">Most VPS images ship with <b>no swap</b>. On a 2 GB machine that is worth fixing before you run a database — a 2 GB swap file costs nothing and stops the out-of-memory killer ending your database at 3 a.m.</p>
+      <div class="code">
+<pre><span class="k">sudo fallocate -l 2G /swapfile</span>
+<span class="k">sudo chmod 600 /swapfile</span>
+<span class="k">sudo mkswap /swapfile</span>
+<span class="k">sudo swapon /swapfile</span>
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</pre>
+      </div>
     </div>
   </div>
 
   <!-- 2 -->
-  <div class="step" data-step="2">
+  <div class="step" data-step="apt" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">02</div>
+      <div class="num"></div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -383,33 +403,9 @@ fwupdmgr update
   </div>
 
   <!-- 3 -->
-  <div class="step" data-step="3">
+  <div class="step" data-step="packages" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">03</div>
-      <button class="done" type="button"><i class="box"></i>Done</button>
-    </div></div>
-    <div>
-      <h3>Snap, apt, flatpak or .deb?</h3>
-      <p class="sub" style="margin-bottom:0">Ubuntu ships four ways to install software. Knowing which to use saves real frustration.</p>
-      <div class="tw"><table>
-        <tr><th>Format</th><th>What it is</th><th>The trade-off</th></tr>
-        <tr><td><span class="mono">apt</span></td><td>The system package manager. Fast, small, integrated, maintained by Ubuntu</td><td>Versions can lag behind upstream</td></tr>
-        <tr><td><span class="mono">snap</span></td><td>Canonical's sandboxed format. Always current, auto-updating, self-contained</td><td>Slower first start, larger disk use, updates you cannot fully control</td></tr>
-        <tr><td><span class="mono">flatpak</span></td><td>Cross-distro sandboxed format. Great desktop app catalogue via Flathub</td><td>Needs setting up manually on Ubuntu</td></tr>
-        <tr><td><span class="mono">.deb file</span></td><td>A downloaded package. Vendor software: Chrome, VS Code, Zoom</td><td>No automatic updates unless it adds its own repository</td></tr>
-      </table></div>
-      <div class="code">
-<pre><span class="k">sudo apt install firefox</span>      <span class="c"># from Ubuntu's repositories</span>
-<span class="k">sudo snap install spotify</span>     <span class="c"># from the Snap Store</span>
-<span class="k">sudo apt install flatpak gnome-software-plugin-flatpak</span>   <span class="c"># then add Flathub</span></pre>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4 -->
-  <div class="step" data-step="4">
-    <div class="rail"><div class="rail-in">
-      <div class="num">04</div>
+      <div class="num"></div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -431,46 +427,116 @@ fwupdmgr update
         <tr><td>Security</td><td>ufw, gnupg, ca-certificates</td></tr>
         <tr><td>Desktop</td><td>gnome-tweaks, restricted-extras (codecs, fonts)</td></tr>
       </table></div>
+      <p class="note">On a server, drop the last line — <code>tlp</code>, <code>gnome-tweaks</code> and the restricted extras are desktop packages.</p>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step" data-step="stop-root" data-scope="server">
+    <div class="rail"><div class="rail-in">
+      <div class="num"></div><div class="tag">server</div>
+      <button class="done" type="button"><i class="box"></i>Done</button>
+    </div></div>
+    <div>
+      <h3>Stop being root</h3>
+      <p class="sub" style="margin-bottom:0">Every action attributed, every mistake recoverable. Every guide from here on assumes it.</p>
+      <div class="cols2">
+        <div class="code">
+<pre><span class="c"># create a user for yourself</span>
+adduser deploy
+usermod -aG sudo deploy
+
+<span class="c"># give it your SSH key</span>
+rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy
+
+<span class="c"># test it from a SECOND terminal</span>
+ssh deploy@203.0.113.10
+<span class="k">sudo whoami</span>        <span class="c"># -&gt; root</span></pre>
+        </div>
+        <div class="why" style="margin-top:18px">
+          <h4>why this matters</h4>
+          <ul>
+            <li>Root has no undo. sudo makes you type an extra word before anything destructive</li>
+            <li>Every sudo command is logged with the user who ran it</li>
+            <li>Disabling root login removes the account every bot on the internet tries first</li>
+            <li>Adding or removing a colleague becomes one command, not a shared password change</li>
+          </ul>
+        </div>
+      </div>
+      <div class="stop">
+        <h4>keep the first session open</h4>
+        <p>Do not close the root window until you have logged in as the new user <b>in a second terminal</b> and confirmed <code>sudo whoami</code> returns root. This is the single most common way people lock themselves out of a brand new server.</p>
+      </div>
     </div>
   </div>
 
   <!-- 5 -->
-  <div class="step" data-step="5">
+  <div class="step" data-step="security" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">05</div><div class="mins">15 min</div>
+      <div class="num"></div><div class="mins">15 min</div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
       <h3>The security baseline</h3>
-      <p class="sub" style="margin-bottom:0">Four things, fifteen minutes, and the machine stops being an easy target.</p>
+      <p class="sub" style="margin-bottom:0">Keys, three config lines and a firewall in the right order. The highest-value fifteen minutes of the whole build.</p>
+
+      <h4 class="mini">Keys instead of passwords</h4>
       <div class="cols2">
         <div class="code">
-<pre><span class="c"># firewall on, default deny inbound</span>
-<span class="k">sudo ufw enable</span>
-<span class="k">sudo ufw status verbose</span>
-
-<span class="c"># on a server, allow SSH FIRST</span>
-<span class="k">sudo ufw allow OpenSSH</span>
-
-<span class="c"># confirm automatic security updates</span>
-systemctl status unattended-upgrades</pre>
+<pre><span class="c"># on your own machine</span>
+ssh-keygen -t ed25519 -C 'you@laptop'
+ssh-copy-id user@server</pre>
         </div>
         <div class="code">
-<pre><span class="c"># SSH keys instead of passwords</span>
-ssh-keygen -t ed25519 -C 'you@laptop'
-ssh-copy-id user@server
-
-<span class="c"># then, on the server</span>
+<pre><span class="c"># then, on the server - the three lines</span>
 <span class="k">sudo nano /etc/ssh/sshd_config</span>
-<span class="c">#   PermitRootLogin no</span>
-<span class="c">#   PasswordAuthentication no</span>
+PermitRootLogin no
+PasswordAuthentication no
+PubkeyAuthentication yes
+
+<span class="k">sudo sshd -t</span>        <span class="c"># test the config FIRST</span>
 <span class="k">sudo systemctl reload ssh</span></pre>
         </div>
       </div>
-      <p class="note">On a remote machine, run <code>ufw allow OpenSSH</code> <b>before</b> <code>ufw enable</code>. Enabling the firewall first locks you out of your own server.</p>
+      <p class="note"><code>sshd -t</code> is not optional ceremony. <b>It catches the typo that would otherwise lock you out</b> the moment you reload.</p>
+
+      <h4 class="mini">The firewall, in this order</h4>
+      <div class="code">
+<pre><span class="c"># SSH first, then the web ports, then enable</span>
+<span class="k">sudo ufw allow OpenSSH</span>
+<span class="k">sudo ufw allow 80/tcp</span>
+<span class="k">sudo ufw allow 443/tcp</span>
+<span class="k">sudo ufw enable</span>
+<span class="k">sudo ufw status verbose</span></pre>
+      </div>
+      <div class="stop">
+        <h4>allow SSH before you enable ufw</h4>
+        <p>Running <code>ufw enable</code> without an SSH rule disconnects you <b>immediately and permanently</b> — the firewall denies inbound by default, including the session you are typing in. Recovery means the provider's web console. Every admin does this exactly once; do it on a lab machine rather than a real one.</p>
+      </div>
+      <p class="note">Your provider's firewall — Hetzner, DigitalOcean, AWS security groups — sits <b>in front of</b> the machine, and <code>ufw</code> can neither see nor override it. If <code>curl</code> works on the server but not from your laptop, that outer layer is why. Use both: defence in depth costs nothing here.</p>
+
+      <h4 class="mini">Bots, and patches that land by themselves</h4>
+      <div class="cols2">
+        <div class="code">
+<pre><span class="c"># jail the ones knocking</span>
+<span class="k">sudo apt install -y fail2ban</span>
+<span class="k">sudo systemctl enable --now fail2ban</span>
+<span class="k">sudo fail2ban-client status sshd</span>
+
+<span class="c"># see what you are protected from</span>
+sudo grep 'Failed password' /var/log/auth.log | wc -l</pre>
+        </div>
+        <div class="code">
+<pre><span class="c"># security patches applied automatically</span>
+<span class="k">sudo apt install -y unattended-upgrades</span>
+<span class="k">sudo dpkg-reconfigure --priority=low unattended-upgrades</span>
+systemctl status unattended-upgrades</pre>
+        </div>
+      </div>
       <p class="note">unattended-upgrades belongs beside the firewall, not after it: <b>a firewall does not help if the service behind it is months out of date.</b></p>
+
       <div class="why">
-        <h4>and the four habits behind them</h4>
+        <h4>and the four habits behind all of it</h4>
         <ul>
           <li>Never log in as root — use sudo</li>
           <li>One user account per person, never shared</li>
@@ -482,9 +548,9 @@ ssh-copy-id user@server
   </div>
 
   <!-- 6 -->
-  <div class="step" data-step="6">
+  <div class="step" data-step="backups" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">06</div>
+      <div class="num"></div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -499,28 +565,45 @@ ssh-copy-id user@server
           <li>A backup you have never restored is a hypothesis, not a backup</li>
         </ul>
       </div>
-      <div class="code">
-<pre><span class="c"># built in, graphical, good enough for a laptop</span>
-<span class="k">sudo apt install -y deja-dup</span>
 
-<span class="c"># serious, versioned, encrypted, scriptable</span>
+      <h4 class="mini">Snapshots and backups are not the same thing</h4>
+      <div class="tw"><table>
+        <tr><th></th><th>A provider snapshot</th><th>File-level backup</th></tr>
+        <tr><td>What it is</td><td>Whole-disk image of the machine</td><td>Versioned copies of the files you choose</td></tr>
+        <tr><td>Good for</td><td>Restoring the entire server in minutes, before a risky change</td><td>"I deleted one file yesterday", offsite copies, deduplication</td></tr>
+        <tr><td>Useless for</td><td>Getting one directory back without rolling the whole machine back</td><td>Bare-metal recovery of a broken upgrade</td></tr>
+      </table></div>
+      <p class="note">Turn on the provider's automatic snapshots when you create the server — they usually cost about 20% and are the fastest possible recovery from a broken upgrade. <b>Then add file backups for what snapshots cannot do.</b></p>
+
+      <div class="cols2">
+        <div class="code">
+<pre><span class="c"># built in, graphical, good enough for a laptop</span>
+<span class="k">sudo apt install -y deja-dup</span></pre>
+        </div>
+        <div class="code">
+<pre><span class="c"># versioned, encrypted, scriptable</span>
 <span class="k">sudo apt install -y restic</span>
 restic init --repo /mnt/backup
-restic -r /mnt/backup backup /home/you
+restic -r /mnt/backup backup /home/you /var/www /etc
 restic -r /mnt/backup snapshots
+restic -r /mnt/backup forget \
+  --keep-daily 7 --keep-weekly 4 --prune
+
+<span class="c"># dump the database, do not copy its live files</span>
+mysqldump -u root -p --all-databases &gt; dump.sql
 
 <span class="c"># and the step nobody does</span>
 restic -r /mnt/backup restore latest --target /tmp/test</pre>
+        </div>
       </div>
-      <p>Deja Dup is fine for a personal laptop: set it, point it at an external drive or cloud target, and let it run. restic is the right answer once you have a server, want deduplication, or need encrypted offsite copies.</p>
       <p class="note">Put a restore in your calendar once a quarter. <b>Restoring one random file proves the whole chain works</b> — and it is the only proof that counts.</p>
     </div>
   </div>
 
   <!-- 7 -->
-  <div class="step" data-step="7">
+  <div class="step" data-step="drivers" data-scope="desktop">
     <div class="rail"><div class="rail-in">
-      <div class="num">07</div>
+      <div class="num"></div><div class="tag">desktop</div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -537,9 +620,9 @@ restic -r /mnt/backup restore latest --target /tmp/test</pre>
   </div>
 
   <!-- 8 -->
-  <div class="step" data-step="8">
+  <div class="step" data-step="desktop" data-scope="desktop">
     <div class="rail"><div class="rail-in">
-      <div class="num">08</div><div class="mins">15 min</div>
+      <div class="num"></div><div class="tag">desktop</div><div class="mins">15 min</div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -558,9 +641,9 @@ restic -r /mnt/backup restore latest --target /tmp/test</pre>
   </div>
 
   <!-- 9 -->
-  <div class="step" data-step="9">
+  <div class="step" data-step="terminal" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">09</div>
+      <div class="num"></div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -594,9 +677,9 @@ source ~/.bashrc</pre>
   </div>
 
   <!-- 10 -->
-  <div class="step" data-step="10">
+  <div class="step" data-step="dev" data-scope="all">
     <div class="rail"><div class="rail-in">
-      <div class="num">10</div><div class="mins">10 min</div>
+      <div class="num"></div><div class="mins">10 min</div>
       <button class="done" type="button"><i class="box"></i>Done</button>
     </div></div>
     <div>
@@ -625,9 +708,9 @@ newgrp docker
 docker run hello-world
 
 <span class="c"># languages: use a version manager, not apt</span>
-<span class="c"># node   -> nvm</span>
-<span class="c"># python -> pyenv or python3-venv</span>
-<span class="c"># rust   -> rustup</span></pre>
+<span class="c"># node   -&gt; nvm</span>
+<span class="c"># python -&gt; pyenv or python3-venv</span>
+<span class="c"># rust   -&gt; rustup</span></pre>
         </div>
       </div>
       <p class="note">Do not install Node or Python versions from apt if you develop against specific versions. <b>Version managers let each project use what it needs</b>, and they never fight the system packages that Ubuntu itself depends on.</p>
@@ -635,9 +718,115 @@ docker run hello-world
     </div>
   </div>
 
+  <!-- 11 -->
+  <div class="step" data-step="dns" data-scope="server">
+    <div class="rail"><div class="rail-in">
+      <div class="num"></div><div class="tag">server</div>
+      <button class="done" type="button"><i class="box"></i>Done</button>
+    </div></div>
+    <div>
+      <h3>Point a domain at it</h3>
+      <p class="sub" style="margin-bottom:0">Two records and one wait. This is the step that turns an IP address into something people can use — and the one certbot depends on.</p>
+      <div class="tw"><table>
+        <tr><th>Type</th><th>Name</th><th>Value</th><th>Notes</th></tr>
+        <tr><td>A</td><td><span class="mono">@</span></td><td><span class="mono">203.0.113.10</span></td><td>The root domain</td></tr>
+        <tr><td>A</td><td><span class="mono">www</span></td><td><span class="mono">203.0.113.10</span></td><td>Or a CNAME to the root — either works</td></tr>
+        <tr><td>AAAA</td><td><span class="mono">@</span></td><td><span class="mono">2a01:4f8::1</span></td><td>Only if your VPS has IPv6 — most do</td></tr>
+        <tr><td>CNAME</td><td><span class="mono">blog</span></td><td><span class="mono">example.com.</span></td><td>Subdomains pointing at the same host</td></tr>
+      </table></div>
+      <div class="code">
+<pre>dig +short example.com        <span class="c"># what the world sees</span>
+dig @1.1.1.1 example.com      <span class="c"># bypass your local resolver</span>
+curl -I http://example.com    <span class="c"># does it reach your server?</span></pre>
+      </div>
+      <p class="note">Set the TTL low — 300 seconds — before you change anything, and raise it once things are stable. <b>A mistake then costs five minutes instead of a day.</b> Propagation is usually minutes, occasionally hours.</p>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="step" data-step="https" data-scope="server">
+    <div class="rail"><div class="rail-in">
+      <div class="num"></div><div class="tag">server</div><div class="mins">10 min</div>
+      <button class="done" type="button"><i class="box"></i>Done</button>
+    </div></div>
+    <div>
+      <h3>A web server and a real certificate</h3>
+      <p class="sub" style="margin-bottom:0">Ten minutes from a bare server to a padlock in the address bar.</p>
+      <div class="cols2">
+        <div class="code">
+<pre><span class="k">sudo apt install -y nginx</span>
+systemctl status nginx
+
+<span class="c"># your site's files</span>
+<span class="k">sudo mkdir -p /var/www/example.com/html</span>
+echo '&lt;h1&gt;It works.&lt;/h1&gt;' | \
+  sudo tee /var/www/example.com/html/index.html
+
+<span class="k">sudo nano /etc/nginx/sites-available/example.com</span>
+<span class="k">sudo ln -s /etc/nginx/sites-available/example.com</span> \
+           /etc/nginx/sites-enabled/
+<span class="k">sudo rm /etc/nginx/sites-enabled/default</span>
+<span class="k">sudo nginx -t &amp;&amp; sudo systemctl reload nginx</span></pre>
+        </div>
+        <div class="code">
+<pre><span class="k">sudo apt install -y certbot python3-certbot-nginx</span>
+
+<span class="k">sudo certbot --nginx -d example.com -d www.example.com</span>
+
+<span class="c"># certbot edits the config and reloads nginx for you</span>
+<span class="k">sudo certbot certificates</span>
+<span class="k">sudo certbot renew --dry-run</span>
+systemctl list-timers | grep certbot</pre>
+        </div>
+      </div>
+      <div class="stop">
+        <h4>when certbot fails, it is almost never certbot</h4>
+        <p>Ninety-nine times out of a hundred it is <b>DNS not pointing here yet</b>, or <b>port 80 blocked</b> in one of the two firewalls — the machine's or the provider's. Fix those before you touch certbot.</p>
+      </div>
+      <p class="note">Renewal is a systemd timer certbot installs for you. <code>renew --dry-run</code> is how you confirm today that it will still work in three months — and an expiring certificate is one of the few things worth alerting on.</p>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="step" data-step="monitoring" data-scope="all">
+    <div class="rail"><div class="rail-in">
+      <div class="num"></div>
+      <button class="done" type="button"><i class="box"></i>Done</button>
+    </div></div>
+    <div>
+      <h3>Let the machine tell you it is unwell</h3>
+      <p class="sub" style="margin-bottom:0">So you find out before a customer does.</p>
+      <div class="cols2">
+        <div class="code">
+<pre><span class="c"># the four numbers that matter</span>
+df -h &amp;&amp; free -h &amp;&amp; uptime
+systemctl --failed</pre>
+        </div>
+        <div class="code">
+<pre><span class="c"># a dashboard in ten minutes</span>
+curl -fsSL https://get.netdata.cloud/kickstart.sh | sh
+
+<span class="c"># do not expose it to the internet</span>
+<span class="k">sudo ufw allow from YOUR.IP.ADDRESS to any port 19999</span></pre>
+        </div>
+      </div>
+      <div class="why">
+        <h4>alert on what users actually feel</h4>
+        <ul>
+          <li>The site does not answer</li>
+          <li>Disk over 85% full</li>
+          <li>A certificate expires in under 14 days</li>
+          <li>A service is in a failed state</li>
+        </ul>
+      </div>
+      <p class="note">Layer a free external uptime check on top — UptimeRobot, Better Stack or Healthchecks.io. <b>A check that runs on the machine cannot tell you the machine is down.</b></p>
+    </div>
+  </div>
+
+  </div>
 </div></section>
 
-<section id="laptop"><div class="wrap">
+<section id="laptop" data-scope="desktop"><div class="wrap">
   <p class="eyebrow">Laptops</p>
   <h2>Battery life and thermals</h2>
   <p class="sub">Ubuntu is good on laptops now. Three settings make it noticeably better.</p>
@@ -691,6 +880,9 @@ snap list --all
   <p class="sub">Almost all of them have a one-line answer.</p>
   <div class="tw"><table>
     <tr><th>Symptom</th><th>Most likely cause</th><th>Fix</th></tr>
+    <tr><td>Locked out right after <span class="mono">ufw enable</span></td><td>No SSH rule existed when the firewall came up</td><td>The provider's web console; allow OpenSSH first next time</td></tr>
+    <tr><td>curl works on the server, not from outside</td><td>The provider's cloud firewall in front of it</td><td>Open the port there too — ufw cannot</td></tr>
+    <tr><td>certbot validation fails</td><td>DNS not pointing here, or port 80 blocked</td><td>Fix those two; the problem is not certbot</td></tr>
     <tr><td>No sound, or the wrong output</td><td>Wrong default device</td><td>Settings &gt; Sound, pick the output</td></tr>
     <tr><td>Screen tearing or stutter</td><td>Graphics driver or Wayland</td><td><span class="mono">ubuntu-drivers autoinstall</span>, or try Xorg</td></tr>
     <tr><td>Wi-Fi drops on resume</td><td>Power saving on the wireless card</td><td>Disable <span class="mono">power_save</span> in NetworkManager</td></tr>
@@ -703,131 +895,40 @@ snap list --all
   <p class="note">And the general rule: <b>read the actual error before searching for it.</b> Ubuntu's messages are usually specific, and the first line is almost always the useful one.</p>
 </div></section>
 
-<section id="server"><div class="wrap">
-  <p class="eyebrow">On a server</p>
-  <h2>The same hour, with different priorities</h2>
-  <p class="sub">No desktop, no drivers — but security and backups matter more, not less.</p>
-  <div class="cols2">
-    <div class="why"><h4>first</h4><ul>
-      <li><code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></li>
-      <li><code>sudo ufw allow OpenSSH</code></li>
-      <li><code>sudo ufw enable</code></li>
-      <li><code>hostnamectl set-hostname web01</code></li>
-    </ul></div>
-    <div class="why"><h4>access</h4><ul>
-      <li><code>ssh-copy-id user@server</code></li>
-      <li><code>PermitRootLogin no</code></li>
-      <li><code>PasswordAuthentication no</code></li>
-      <li><code>sudo systemctl reload ssh</code></li>
-    </ul></div>
-    <div class="why"><h4>hardening</h4><ul>
-      <li><code>sudo apt install -y fail2ban</code></li>
-      <li>Enable unattended-upgrades</li>
-      <li>Close every port you do not need</li>
-      <li>Open 80/443 in the cloud firewall too</li>
-      <li>Check <code>ss -tulpn</code> regularly</li>
-    </ul></div>
-    <div class="why"><h4>operations</h4><ul>
-      <li><code>timedatectl set-timezone …</code></li>
-      <li>Set up restic or your backup tool</li>
-      <li>Install monitoring — Netdata is fastest</li>
-      <li>Document what runs on this box</li>
-    </ul></div>
-  </div>
-  <p class="note">Get backups and monitoring running <b>before anything real lands on the box</b> — retrofitting them around a live service is how they end up half-configured.</p>
-  <p class="note">Name the host something you will recognise at 3 a.m., not <code>server1</code>.</p>
-</div></section>
-
-<section id="https"><div class="wrap">
-  <p class="eyebrow">HTTPS</p>
-  <h2>A real certificate, in two commands</h2>
-  <p class="sub">Ten minutes from a bare server to a padlock in the address bar. Most of the work is what has to be true <b>before</b> certbot runs.</p>
-
-  <div class="why">
-    <h4>two things must already be true</h4>
-    <ul>
-      <li><b>Ports 80 and 443 open in both firewalls</b> — <code>ufw</code> on the machine, and the provider's cloud firewall (Hetzner, DigitalOcean, AWS security groups) sitting in front of it</li>
-      <li><b>DNS already points at the server</b> — certbot proves you control the domain by being answered at it</li>
-    </ul>
-  </div>
-  <p class="note"><code>ufw</code> cannot see or override the provider's firewall. <b>If <code>curl</code> works on the box but not from your laptop, that outer layer is why.</b></p>
-
-  <div class="code">
-<pre><span class="c"># on the machine - SSH first, then the web ports, then enable</span>
-<span class="k">sudo ufw allow OpenSSH</span>
-<span class="k">sudo ufw allow 80/tcp</span>
-<span class="k">sudo ufw allow 443/tcp</span>
-<span class="k">sudo ufw enable</span></pre>
-  </div>
-
-  <h3 style="margin-top:38px">Point a domain at it</h3>
-  <div class="tw"><table>
-    <tr><th>Type</th><th>Name</th><th>Value</th><th>Notes</th></tr>
-    <tr><td>A</td><td><span class="mono">@</span></td><td><span class="mono">203.0.113.10</span></td><td>The root domain</td></tr>
-    <tr><td>A</td><td><span class="mono">www</span></td><td><span class="mono">203.0.113.10</span></td><td>Or a CNAME to the root — either works</td></tr>
-    <tr><td>AAAA</td><td><span class="mono">@</span></td><td><span class="mono">2a01:4f8::1</span></td><td>Only if your VPS has IPv6 — most do</td></tr>
-    <tr><td>CNAME</td><td><span class="mono">blog</span></td><td><span class="mono">example.com.</span></td><td>Subdomains pointing at the same host</td></tr>
-  </table></div>
-  <div class="code">
-<pre>dig +short example.com        <span class="c"># what the world sees</span>
-dig @1.1.1.1 example.com      <span class="c"># bypass your local resolver</span>
-curl -I http://example.com    <span class="c"># does it reach your server?</span></pre>
-  </div>
-  <p class="note">Set the TTL low — 300 seconds — before you change anything, and raise it once things are stable. A mistake then costs five minutes instead of a day.</p>
-
-  <h3 style="margin-top:38px">nginx, then the certificate</h3>
-  <div class="cols2" style="align-items:start">
-    <div class="code">
-<pre><span class="k">sudo apt install -y nginx</span>
-systemctl status nginx
-
-<span class="c"># your site's files</span>
-<span class="k">sudo mkdir -p /var/www/example.com/html</span>
-echo '&lt;h1&gt;It works.&lt;/h1&gt;' | \
-  sudo tee /var/www/example.com/html/index.html
-
-<span class="k">sudo nano /etc/nginx/sites-available/example.com</span>
-<span class="k">sudo ln -s /etc/nginx/sites-available/example.com</span> \
-           /etc/nginx/sites-enabled/
-<span class="k">sudo rm /etc/nginx/sites-enabled/default</span>
-<span class="k">sudo nginx -t &amp;&amp; sudo systemctl reload nginx</span></pre>
-    </div>
-    <div class="code">
-<pre><span class="k">sudo apt install -y certbot python3-certbot-nginx</span>
-
-<span class="k">sudo certbot --nginx -d example.com -d www.example.com</span>
-
-<span class="c"># certbot edits the config and reloads nginx for you</span>
-<span class="k">sudo certbot certificates</span>
-<span class="k">sudo certbot renew --dry-run</span>
-systemctl list-timers | grep certbot</pre>
-    </div>
-  </div>
-
-  <p class="note"><b>When certbot fails, it is almost never certbot.</b> Ninety-nine times out of a hundred it is DNS not pointing here yet, or port 80 blocked in one of the two firewalls. Fix that before you touch certbot.</p>
-  <p class="note">Renewal is a systemd timer certbot installs for you. <code>renew --dry-run</code> is how you confirm today that it will still work in three months — and <b>an expiring certificate is one of the few things worth alerting on.</b></p>
-</div></section>
-
 <section id="sheet"><div class="wrap">
   <p class="eyebrow">Keep this page</p>
   <h2>The complete command cheat sheet</h2>
-  <p class="sub">Everything from this guide, grouped by when you need it. You will not remember twenty commands on day one — you only need to know where to look.</p>
+  <p class="sub">Everything from this guide, grouped by when you need it. You will not remember it all on day one — you only need to know where to look.</p>
   <div class="sheet">
     <div class="panel"><h4>update</h4>
 <pre>sudo apt update &amp;&amp; sudo apt upgrade -y
 sudo apt full-upgrade
 fwupdmgr refresh &amp;&amp; fwupdmgr update
-cat /var/run/reboot-required</pre></div>
+ls /var/run/reboot-required</pre></div>
     <div class="panel"><h4>packages</h4>
 <pre>sudo apt install -y NAME
 sudo apt purge NAME
 apt search KEYWORD
 apt show NAME</pre></div>
-    <div class="panel"><h4>security</h4>
-<pre>sudo ufw enable
-sudo ufw allow OpenSSH
-ssh-keygen -t ed25519
-systemctl status unattended-upgrades</pre></div>
+    <div class="panel"><h4>ssh</h4>
+<pre>ssh-keygen -t ed25519
+ssh-copy-id user@server
+sudo sshd -t
+sudo systemctl reload ssh</pre></div>
+    <div class="panel"><h4>firewall</h4>
+<pre>sudo ufw allow OpenSSH
+sudo ufw allow 80/tcp &amp;&amp; sudo ufw allow 443/tcp
+sudo ufw enable
+sudo ufw status verbose</pre></div>
+    <div class="panel"><h4>dns</h4>
+<pre>dig +short example.com
+dig @1.1.1.1 example.com
+curl -I http://example.com</pre></div>
+    <div class="panel"><h4>https</h4>
+<pre>sudo certbot --nginx -d example.com
+sudo certbot certificates
+sudo certbot renew --dry-run
+systemctl list-timers | grep certbot</pre></div>
     <div class="panel"><h4>drivers</h4>
 <pre>ubuntu-drivers devices
 sudo ubuntu-drivers autoinstall
@@ -838,15 +939,6 @@ lspci -nn | grep -i net</pre></div>
 restic -r /mnt/backup backup /home/you
 restic -r /mnt/backup snapshots
 restic -r /mnt/backup restore latest</pre></div>
-    <div class="panel"><h4>https</h4>
-<pre>sudo certbot --nginx -d example.com
-sudo certbot certificates
-sudo certbot renew --dry-run
-systemctl list-timers | grep certbot</pre></div>
-    <div class="panel"><h4>dns</h4>
-<pre>dig +short example.com
-dig @1.1.1.1 example.com
-curl -I http://example.com</pre></div>
     <div class="panel"><h4>cleanup</h4>
 <pre>sudo apt autoremove --purge
 sudo apt clean
@@ -856,32 +948,41 @@ df -h &amp;&amp; du -h -d1 /var</pre></div>
 </div></section>
 
 <footer><div class="wrap">
-  <p>A working checklist for the first hour after an Ubuntu install. Commands are copy-paste ready; your ticked steps are remembered in this browser only.</p>
+  <p>A working checklist for the first hour after an Ubuntu install, on a laptop, a desktop or a VPS. Commands are copy-paste ready; your machine choice and ticked steps are remembered in this browser only.</p>
   <p><button class="reset" type="button" id="reset">Clear my progress</button></p>
 </div></footer>
 
 <script>
 (function(){
-  var KEY='ubuntu-first-hour:done';
+  var KEY='ubuntu-first-hour:done:v2', SKEY='ubuntu-first-hour:scope';
 
-  function load(){
-    try{ return JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ return []; }
-  }
-  function save(list){
-    try{ localStorage.setItem(KEY, JSON.stringify(list)); }catch(e){}
-  }
+  function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f; }catch(e){ return f; } }
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 
   var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
-  var done = load();
+  var done  = load(KEY, []);
+  var scope = load(SKEY, 'all');
+  if (['all','desktop','server'].indexOf(scope) < 0) scope = 'all';
 
-  function paint(){
+  function paintDone(){
     steps.forEach(function(s){
       s.setAttribute('data-done', done.indexOf(s.dataset.step) > -1 ? '1' : '0');
-      var b = s.querySelector('.done');
-      if(b) b.lastChild.nodeValue = s.getAttribute('data-done')==='1' ? 'Done' : 'Done';
     });
   }
-  paint();
+
+  function paintScope(){
+    var show = function(el){
+      var sc = el.dataset.scope || 'all';
+      el.style.display = (scope === 'all' || sc === 'all' || sc === scope) ? '' : 'none';
+    };
+    steps.forEach(show);
+    document.querySelectorAll('section[data-scope]').forEach(show);
+    document.querySelectorAll('.pick').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.scope === scope ? 'true' : 'false');
+    });
+  }
+
+  paintDone(); paintScope();
 
   steps.forEach(function(s){
     var btn = s.querySelector('.done');
@@ -889,14 +990,21 @@ df -h &amp;&amp; du -h -d1 /var</pre></div>
     btn.addEventListener('click', function(){
       var id = s.dataset.step, i = done.indexOf(id);
       if(i > -1){ done.splice(i,1); } else { done.push(id); }
-      save(done); paint();
+      save(KEY, done); paintDone();
+    });
+  });
+
+  document.querySelectorAll('.pick').forEach(function(b){
+    b.addEventListener('click', function(){
+      scope = b.dataset.scope; save(SKEY, scope); paintScope();
     });
   });
 
   var reset = document.getElementById('reset');
-  if(reset) reset.addEventListener('click', function(){ done = []; save(done); paint(); });
+  if(reset) reset.addEventListener('click', function(){
+    done = []; save(KEY, done); paintDone();
+  });
 
-  // copy buttons on every code block
   document.querySelectorAll('.code').forEach(function(box){
     var pre = box.querySelector('pre');
     if(!pre) return;
